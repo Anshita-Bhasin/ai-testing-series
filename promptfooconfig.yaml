@@ -1,0 +1,24 @@
+description: "Hotel Info  Extraction Prompt"
+
+
+prompts:
+  - |-
+    Extract the following info from this hotel description:
+    1) Location/Area
+    2) Key amenities
+    3) Approximate price
+    Text: {{text}}
+
+providers:
+    - groq:llama-3.1-8b-instant
+
+tests:
+  - vars:
+      text: "Located in the heart of Dubai Marina, this 5-star hotel has a pool, spa, multiple dining options, and rooms starting at AED 500 per night."
+    assert:
+      - type: contains
+        value: "Dubai Marina"
+      - type: icontains
+        value: "pool"
+      - type: contains
+        value: "AED 500"
