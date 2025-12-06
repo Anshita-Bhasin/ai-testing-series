@@ -1,0 +1,47 @@
+description: "Hotel Info Extraction — Dynamic Inputs"
+
+prompts:
+  - |-
+    Extract the following info from this hotel description:
+    1) Location/Area
+    2) Key amenities
+    3) Approximate price
+
+    Description: {{hotel_description}}
+
+providers:
+    - groq:llama-3.1-8b-instant
+
+tests:
+  # Test Case 1
+  - vars:
+      hotel_description: "Located in the heart of Dubai Marina, this 5-star hotel includes a rooftop pool, spa, and rooms starting at AED 500."
+    assert:
+      - type: contains
+        value: "Dubai Marina"
+      - type: icontains
+        value: "pool"
+      - type: contains
+        value: "AED 500"
+
+  # Test Case 2
+  - vars:
+      hotel_description: "This UAE Corniche hotel offers a private beach, free breakfast, and suites priced around AED 6050 per night."
+    assert:
+      - type: contains
+        value: "Abu Dhabi"
+      - type: icontains
+        value: "beach"
+      - type: contains
+        value: "AED 650"
+
+  # Test Case 3
+  - vars:
+      hotel_description: "A budget-friendly hotel in Bur Dubai with free Wi-Fi, family rooms, and prices starting from AED 250."
+    assert:
+      - type: contains
+        value: "Bur Dubai"
+      - type: icontains
+        value: "Wi-Fi"
+      - type: contains
+        value: "AED 250"

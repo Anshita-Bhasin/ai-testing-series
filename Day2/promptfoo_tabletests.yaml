@@ -1,0 +1,38 @@
+description: "Hotel Info Extraction — Dynamic Inputs"
+
+prompts:
+  - |-
+    Extract the following info from this hotel description:
+    1) Location/Area
+    2) Key amenities
+    3) Approximate price
+
+    Description: {{hotel_description}}
+
+providers:
+    - groq:llama-3.1-8b-instant
+
+tests:
+  - vars:
+      hotel_description: |
+        Located in Dubai Marina with pool and spa. Rooms start at AED 500.
+  - vars:
+      hotel_description: |
+        Abu Dhabi Corniche hotel with private beach and suites from AED 650.
+  - vars:
+      hotel_description: |
+        Bur Dubai hotel with free Wi-Fi and rooms from AED 250.
+
+
+assert:
+  - type: regex
+    value: "(Dubai Marina|Abu Dhabi|Bur Dubai)"
+
+  - type: containsAny
+    value:
+      - "pool"
+      - "beach"
+      - "Wi-Fi"
+
+  - type: regex
+    value: "AED\\s?\\d+"
