@@ -26,7 +26,7 @@ tests:
 
   # Test Case 2
   - vars:
-      hotel_description: "This UAE Corniche hotel offers a private beach, free breakfast, and suites priced around AED 6050 per night."
+      hotel_description: "This Abu Dhabi Corniche hotel offers a private beach, free breakfast, and suites priced around AED 650 per night."
     assert:
       - type: contains
         value: "Abu Dhabi"

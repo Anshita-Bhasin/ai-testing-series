@@ -1,0 +1,30 @@
+prompts:
+  - "You are a sentiment analysis AI. Analyze the customer feedback and classify it.
+    
+    Customer Feedback: {{customer_feedback}}
+    Context: {{context}}
+    
+    You MUST classify using ONLY these exact words:
+    
+    Sentiment: positive OR negative OR neutral
+    Topic: [main topic of the feedback]
+    
+    Respond in this EXACT format (use lowercase):
+    Sentiment: [your choice]
+    Topic: [your choice]
+    
+    Example:
+    Sentiment: positive
+    Topic: product quality"    
+
+providers:
+    - groq:llama-3.1-8b-instant
+
+tests: ./sentiment-tests.csv
+
+defaultTest:
+  assert:
+    - type: icontains
+      value: "{{expected_sentiment}}"
+    - type: icontains
+      value: "{{expected_topic}}"

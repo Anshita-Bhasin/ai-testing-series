@@ -1,0 +1,11 @@
+customer_feedback,context,expected_sentiment,expected_topic
+"The product arrived quickly and works perfectly! Exactly what I needed.","product_category: electronics, customer_type: new","positive","product quality"
+"Terrible experience. Customer service never responded to my emails.","product_category: software, customer_type: returning","negative","customer service"
+"It's okay I guess. Does the job but nothing special.","product_category: home goods, customer_type: new","neutral","product quality"
+"Love it! Best purchase I've made this year. Highly recommend!","product_category: electronics, customer_type: returning","positive","product quality"
+"The shipping took forever and the package arrived damaged.","product_category: furniture, customer_type: new","negative","delivery"
+"Good quality but way too expensive for what you get.","product_category: clothing, customer_type: new","negative","price"
+"Fast delivery and excellent customer support when I had questions.","product_category: software, customer_type: returning","positive","customer service"
+"Meh, nothing to complain about but nothing impressive either.","product_category: electronics, customer_type: new","neutral","product quality"
+"Stopped working after 2 weeks. Total waste of money!","product_category: electronics, customer_type: new","negative","product quality"
+"The interface is confusing and hard to navigate.","product_category: software, customer_type: new","negative","user experience"
