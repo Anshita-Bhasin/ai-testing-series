@@ -22,6 +22,7 @@ providers:
 
 tests: ./sentiment-tests.csv
 
+
 defaultTest:
   assert:
     - type: icontains
