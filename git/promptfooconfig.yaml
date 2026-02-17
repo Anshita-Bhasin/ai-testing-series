@@ -1,0 +1,45 @@
+prompts:
+  - |
+    Extract product information from the following description and return it as JSON with these fields:
+    - name (string)
+    - price (number)
+    - storage (string)
+    - color (string, if available)
+
+    Product: {{product_description}}
+
+    Return only valid JSON, no additional text.
+
+providers:
+  - groq:llama-3.1-8b-instant
+
+tests:
+  - description: "Valid iPhone product extraction"
+    vars:
+      product_description: "iPhone 17 Pro Max - $1399, 512GB storage, Silver"
+    assert:
+      - type: is-json
+
+      - type: javascript
+        value: |
+          const product = JSON.parse(output);
+          return product.price > 0 && product.price < 2000;
+          
+
+      - type: javascript
+        value: |
+          const product = JSON.parse(output);
+          const requiredFields = ['name', 'price', 'storage'];
+          return requiredFields.every(field => product.hasOwnProperty(field));
+
+      - type: javascript
+        threshold: 0.8
+        value: |
+          const product = JSON.parse(output);
+          let score = 0;
+          if (product.name && product.name.includes('iPhone')) score += 0.4;
+          if (product.price >= 1100 && product.price <= 1300) score += 0.3;
+          if (product.storage && product.storage.includes('512')) score += 0.3;
+          return { pass: score >= 0.8, score: score };
+
+  

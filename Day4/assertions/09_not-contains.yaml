@@ -1,0 +1,45 @@
+description: "Assertion 9: not-contains - Prevent unwanted text"
+
+prompts:
+  - |
+    Extract product information from the following description and return it as JSON with these fields:
+    - name (string)
+    - price (number)
+    - storage (string)
+    - color (string, if available)
+
+    Product: {{product_description}}
+
+    Return only valid JSON, no additional text.
+
+providers:
+  - groq:llama-3.1-8b-instant
+
+tests:
+  - description: "Test 1: No 'Here is' preamble"
+    vars:
+      product_description: "iPhone 15 - $799, 128GB, Pink"
+    assert:
+      - type: is-json
+      - type: not-contains
+        value: "Here is"
+
+  - description: "Test 2: No 'Here's' casual language"
+    vars:
+      product_description: "AirPods Pro 2 - $249, White"
+    assert:
+      - type: is-json
+      - type: not-contains
+        value: "Here's"
+
+  - description: "Test 3: No explanatory phrases"
+    vars:
+      product_description: "iPad Pro 11 - $799, 128GB, Space Gray"
+    assert:
+      - type: is-json
+      - type: not-contains
+        value: "The extracted"
+      - type: not-contains
+        value: "Based on"
+      - type: not-contains
+        value: "Pro"

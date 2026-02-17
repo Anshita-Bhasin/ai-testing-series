@@ -1,0 +1,41 @@
+description: "Assertion 5: regex - Pattern matching"
+
+prompts:
+  - |
+    Extract product information from the following description and return it as JSON with these fields:
+    - name (string)
+    - price (number)
+    - storage (string)
+    - color (string, if available)
+
+    Product: {{product_description}}
+
+    Return only valid JSON, no additional text.
+
+providers:
+  - groq:llama-3.1-8b-instant
+
+tests:
+  - description: "Test 1: Check price field exists with number"
+    vars:
+      product_description: "MacBook Pro 14 - $1999, 512GB, Space Gray"
+    assert:
+      - type: is-json
+      - type: regex
+        value: '"price":\s*\d+'
+
+  - description: "Test 2: Check storage has GB pattern"
+    vars:
+      product_description: "Dell XPS 13 - $1299, 512GB SSD, Platinum"
+    assert:
+      - type: is-json
+      - type: regex
+        value: '\d+GB'
+
+  - description: "Test 3: Check name field has quoted text"
+    vars:
+      product_description: "Sony WH-1000XM5 - $399, Black"
+    assert:
+      - type: is-json
+      - type: regex
+        value: '"name":\s*"[^"]+"'

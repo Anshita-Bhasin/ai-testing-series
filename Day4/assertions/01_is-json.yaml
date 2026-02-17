@@ -1,0 +1,35 @@
+description: "Assertion 1: is-json - Validate JSON format"
+
+prompts:
+  - |
+    Extract product information from the following description and return it as JSON with these fields:
+    - name (string)
+    - price (number)
+    - storage (string)
+    - color (string, if available)
+
+    Product: {{product_description}}
+
+    Return only valid JSON, no additional text.
+
+providers:
+  - groq:llama-3.1-8b-instant
+
+tests:
+  - description: "Test 1: Valid JSON output"
+    vars:
+      product_description: "iPhone 15 Pro - $999, 128GB, Blue"
+    assert:
+      - type: is-json
+
+  - description: "Test 2: Complex product with all fields"
+    vars:
+      product_description: "Samsung Galaxy S24 Ultra - $1299, 512GB, Titanium Gray, 5G"
+    assert:
+      - type: is-json
+
+  - description: "Test 3: Product with missing optional field (no color)"
+    vars:
+      product_description: "iPad Air - $599, 256GB"
+    assert:
+      - type: is-json

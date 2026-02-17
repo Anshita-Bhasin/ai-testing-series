@@ -1,0 +1,53 @@
+description: "Assertion 8: contains-any - At least one string must be present"
+
+prompts:
+  - |
+    Extract product information from the following description and return it as JSON with these fields:
+    - name (string)
+    - price (number)
+    - storage (string)
+    - color (string, if available)
+
+    Product: {{product_description}}
+
+    Return only valid JSON, no additional text.
+
+providers:
+  - groq:llama-3.1-8b-instant
+
+tests:
+  - description: "Test 1: Color field - any color mention"
+    vars:
+      product_description: "Nintendo Switch OLED - $349, Neon Red/Blue"
+    assert:
+      - type: is-json
+      - type: contains-any
+        value:
+          - "Red"
+          - "Blue"
+          - "Neon"
+          - "color"
+
+  - description: "Test 2: Brand - any Apple product name"
+    vars:
+      product_description: "MacBook Air M2 - $1099, 256GB, Midnight"
+    assert:
+      - type: contains-any
+        value:
+          - "iPhone"
+          - "iPad"
+          - "MacBook"
+          - "Apple"
+
+  - description: "Test 3: Storage - any storage size indicator"
+    vars:
+      product_description: "Samsung Galaxy Tab S9 - $799, 128GB, Graphite"
+    assert:
+      - type: is-json
+      - type: contains-any
+        value:
+          - "64GB"
+          - "128GB"
+          - "256GB"
+          - "512GB"
+          - "1TB"

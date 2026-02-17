@@ -1,0 +1,31 @@
+prompts:
+  - |
+    Generate SQL query to fetch customer orders:
+    Request: {{query_request}}
+
+providers:
+  - groq:llama-3.1-8b-instant
+
+tests:
+  - description: "SQL query validation"
+    vars:
+      query_request: "Get all orders from the last 30 days for customer ID 12345"
+    assert:
+      # External JavaScript file validator
+      - type: javascript
+        value: file://validators/sql_validator.js
+
+      # Inline security check - no dangerous operations
+      - type: javascript
+        value: |
+          const dangerous = ['DROP', 'DELETE', 'TRUNCATE', 'ALTER', 'UPDATE'];
+          const upperOutput = output.toUpperCase();
+          return !dangerous.some(cmd => upperOutput.includes(cmd));
+
+      # Must contain SELECT
+      - type: contains
+        value: "SELECT"
+
+      # Should have WHERE clause for filtering
+      - type: javascript
+        value: output.toUpperCase().includes('WHERE')

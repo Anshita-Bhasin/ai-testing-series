@@ -1,0 +1,26 @@
+description: "Assertion 4: equals - Exact output matching"
+
+prompts:
+  - |
+    Answer with ONLY the exact text requested, nothing more, nothing less.
+
+    Question: {{question}}
+
+providers:
+  - groq:llama-3.1-8b-instant
+
+tests:
+  - description: "Test 1: Exact match - single word"
+    vars:
+      question: "What is the capital of France? Answer with only the city name."
+    assert:
+      - type: equals
+        value: "Paris "
+
+  - description: "Test 2: Exact match - number"
+    vars:
+      question: "What is 10 + 5? Answer with only the number."
+    assert:
+      - type: equals
+        value: "15"
+

@@ -1,0 +1,41 @@
+description: "Assertion 6: starts-with - Output prefix validation"
+
+prompts:
+  - |
+    Extract product information from the following description and return it as JSON with these fields:
+    - name (string)
+    - price (number)
+    - storage (string)
+    - color (string, if available)
+
+    Product: {{product_description}}
+
+    Return only valid JSON, no additional text.
+
+providers:
+  - groq:llama-3.1-8b-instant
+
+tests:
+  - description: "Test 1: JSON starts with opening brace"
+    vars:
+      product_description: "iPhone 15 - $799, 128GB, Blue"
+    assert:
+      - type: is-json
+      - type: starts-with
+        value: "{"
+
+  - description: "Test 2: Ensure no extra text before JSON"
+    vars:
+      product_description: "Samsung Galaxy S24 - $899, 256GB, Black"
+    assert:
+      - type: is-json
+      - type: starts-with
+        value: "{"
+
+  - description: "Test 3: Clean JSON output (no preamble)"
+    vars:
+      product_description: "Google Pixel 8 - $699, 128GB, Obsidian"
+    assert:
+      - type: is-json
+      - type: starts-with
+        value: "{"

@@ -1,0 +1,80 @@
+prompts:
+  - |
+    Generate a professional email response to the following customer inquiry:
+
+    Customer: {{customer_message}}
+
+    Write a professional, helpful response.
+
+providers:
+  - groq:llama-3.1-8b-instant
+
+tests:
+  - description: "Email should be professional and within length limits"
+    vars:
+      customer_message: "I haven't received my order yet. It's been 2 weeks!"
+    assert:
+      # Python custom assertion - check word count
+      - type: python
+        value: |
+          output_words = len(output.split())
+          return 50 <= output_words <= 200
+
+      # Python custom assertion - check for professional tone
+      - type: python
+        value: |
+          unprofessional_words = ['hey', 'yeah', 'nah', 'gonna', 'wanna']
+          output_lower = output.lower()
+          return not any(word in output_lower for word in unprofessional_words)
+
+      # Python custom assertion - must contain apology or acknowledgment
+      - type: python
+        value: |
+          acknowledgment_phrases = ['apologize', 'sorry', 'understand your concern',
+                                     'appreciate your patience', 'unfortunate']
+          output_lower = output.lower()
+          return any(phrase in output_lower for phrase in acknowledgment_phrases)
+
+      # Python scoring function - email quality score
+      - type: python
+        threshold: 0.7
+        value: |
+          score = 0.0
+          output_lower = output.lower()
+
+          # Check for greeting (0.2 points)
+          greetings = ['dear', 'hello', 'hi']
+          if any(g in output_lower for g in greetings):
+              score += 0.2
+
+          # Check for apology (0.3 points)
+          if 'apolog' in output_lower or 'sorry' in output_lower:
+              score += 0.3
+
+          # Check for solution/action (0.3 points)
+          action_words = ['will', 'investigate', 'check', 'resolve', 'track']
+          if any(word in output_lower for word in action_words):
+              score += 0.3
+
+          # Check for closing (0.2 points)
+          closings = ['sincerely', 'regards', 'best', 'thank you']
+          if any(c in output_lower for c in closings):
+              score += 0.2
+
+          return {'pass': score >= 0.7, 'score': score, 'reason': f'Email quality score: {score}'}
+
+  - description: "Complaint about product defect"
+    vars:
+      customer_message: "The screen on my new laptop is flickering constantly"
+    assert:
+      - type: python
+        value: |
+          output_words = len(output.split())
+          return 50 <= output_words <= 200
+
+      - type: python
+        value: |
+          # Should mention warranty, replacement, or repair
+          keywords = ['warranty', 'replacement', 'repair', 'exchange', 'defect']
+          output_lower = output.lower()
+          return any(keyword in output_lower for keyword in keywords)

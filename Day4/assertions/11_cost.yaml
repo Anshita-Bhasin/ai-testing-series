@@ -1,0 +1,41 @@
+description: "Assertion 11: cost - API cost validation"
+
+prompts:
+  - |
+    Extract product information from the following description and return it as JSON with these fields:
+    - name (string)
+    - price (number)
+    - storage (string)
+    - color (string, if available)
+
+    Product: {{product_description}}
+
+    Return only valid JSON, no additional text.
+
+providers:
+  - groq:llama-3.1-8b-instant
+
+tests:
+  - description: "Test 1: Cost under 1 cent per call"
+    vars:
+      product_description: "Tesla Model 3 - $42990, Long Range, Pearl White"
+    assert:
+      - type: is-json
+      - type: cost
+        threshold: 0.01
+
+  - description: "Test 2: Cost under half cent per call"
+    vars:
+      product_description: "Dyson V15 Vacuum - $649, Cordless, Yellow"
+    assert:
+      - type: is-json
+      - type: cost
+        threshold: 0.005
+
+  - description: "Test 3: Very low cost under 0.1 cent"
+    vars:
+      product_description: "Bose QuietComfort Earbuds - $299, Black"
+    assert:
+      - type: is-json
+      - type: cost
+        threshold: 0.001
