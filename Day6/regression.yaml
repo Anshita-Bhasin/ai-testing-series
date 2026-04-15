@@ -1,0 +1,56 @@
+description: "Use Case 2 — Regression Testing When You Change a Prompt"
+
+prompts:
+  # OLD prompt (v1) — your current production prompt
+  - |-
+    Summarize this customer support ticket in one sentence.
+
+    Ticket: {{ticket}}
+
+  # NEW prompt (v2) — the prompt you want to deploy
+  - |-
+    You are a customer support assistant. Summarize this ticket in one clear, concise sentence. Focus on the core issue and any urgency.
+
+    Ticket: {{ticket}}
+
+defaultTest:
+  options:
+    provider: groq:llama-3.1-8b-instant
+
+providers:
+  - groq:llama-3.1-8b-instant
+
+tests:
+  - vars:
+      ticket: "I've been charged twice for my subscription this month. Order #4521. I need a refund ASAP, I'm on a tight budget and this has caused my account to overdraft."
+    assert:
+      - type: contains-any
+        value:
+          - "charged twice"
+          - "double-charged"
+          - "overcharged"
+          - "duplicate charge"
+      - type: icontains
+        value: "refund"
+      - type: llm-rubric
+        value: "The summary mentions a duplicate or double charge on the subscription and that the customer needs a refund. It may optionally mention urgency or financial impact."
+
+  - vars:
+      ticket: "Login page shows a blank screen on Chrome 120. Works fine on Firefox. Started happening after the latest update."
+    assert:
+      - type: contains
+        value: "Chrome"
+      - type: icontains
+        value: "blank"
+      - type: llm-rubric
+        value: "The summary mentions a blank screen issue on the login page in Chrome 120 after a recent update. It may optionally mention that Firefox is unaffected."
+
+  - vars:
+      ticket: "I want to cancel my account. Your product is too expensive and the new UI is confusing. I've been a customer for 3 years."
+    assert:
+      - type: contains-any
+        value:
+          - "cancel"
+          - "cancellation"
+      - type: llm-rubric
+        value: "The summary should mention the customer wants to cancel due to high pricing and confusing new UI."

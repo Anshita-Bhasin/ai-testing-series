@@ -1,0 +1,63 @@
+description: "Use Case 1 — Compare Llama vs Claude on Email Tone Generation"
+
+prompts:
+  - |-
+    Write a short customer support email (3-4 sentences max) in a {{tone}} tone.
+
+    Context: {{context}}
+
+    Reply only with the email body. No subject line.
+
+providers:
+  - groq:llama-3.1-8b-instant
+  - anthropic:messages:claude-sonnet-4-6
+
+
+tests:
+  # Test 1: Casual apology email
+  - vars:
+      tone: "casual and friendly"
+      context: "Customer's order was delayed by 3 days. We need to apologize and offer a 10% discount on their next order."
+    assert:
+      - type: icontains
+        value: "sorry"
+      - type: icontains
+        value: "10%"
+      - type: llm-rubric
+        value: "The email sounds casual and friendly, not corporate or robotic. It feels like a human wrote it."
+
+  # Test 2: Formal B2B email
+  - vars:
+      tone: "formal and professional"
+      context: "A enterprise client reported a bug in our API. The fix will be deployed in 48 hours. We need to acknowledge the issue."
+    assert:
+      - type: icontains
+        value: "48 hours"
+      - type: llm-rubric
+        value: "The email sounds formal and professional, appropriate for a B2B enterprise client. No slang or casual language."
+      - type: not-icontains
+        value: "hey"
+
+  # Test 3: Urgent escalation email
+  - vars:
+      tone: "urgent but calm"
+      context: "Customer's payment was charged twice. Total overcharge is $299. We need to confirm the refund is being processed."
+    assert:
+      - type: icontains
+        value: "refund"
+      - type: contains-any
+        value:
+          - "$299"
+          - "299"
+      - type: llm-rubric
+        value: "The email conveys urgency about resolving the issue quickly but remains calm and reassuring. The customer should feel the issue is under control."
+
+  # Test 4: Empathetic retention email
+  - vars:
+      tone: "empathetic and understanding"
+      context: "Long-time customer (3 years) wants to cancel their subscription because of recent price increase. We want to offer them a 20% loyalty discount."
+    assert:
+      - type: icontains
+        value: "20%"
+      - type: llm-rubric
+        value: "The email shows genuine empathy and understanding. It acknowledges the customer's loyalty and concern about pricing. It does NOT sound like a generic retention script."
